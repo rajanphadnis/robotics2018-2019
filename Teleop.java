@@ -9,10 +9,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.EventLoopManager;
 
-/**
- * Created by KJsMacbookAir on 10/10/17.
- */
-
 @TeleOp(name="Teleop", group="Pushbot")
 public class Teleop extends OpMode
 {
@@ -136,7 +132,7 @@ public class Teleop extends OpMode
 
 		br.setPower(wheelSpeeds[3]);
 
-	}   //mecanumDrive_Cartesian
+	}
 
 
 
@@ -187,17 +183,6 @@ public class Teleop extends OpMode
 	public void loop()
 	{
 		// drive code
-		// final float Vx = -gamepad1.left_stick_x;
-		// final float Vy = -gamepad1.left_stick_y;
-		// final float w = gamepad1.right_stick_x;
-		// fl.setPower(Vy + Vx + w);
-		// fr.setPower(Vy - Vx - w);
-		// bl.setPower(Vy - Vx + w);
-		// br.setPower(Vy + Vx - w);
-		
-		// telemetry.addData("Vy: ", Vy);
-		// telemetry.addData("Vx: ", Vx);
-		// telemetry.addData("w: ", w);
 		float leftY = -gamepad1.left_stick_y;
 
 		float leftX = -gamepad1.left_stick_x;
