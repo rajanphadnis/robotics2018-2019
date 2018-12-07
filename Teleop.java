@@ -1,6 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import java.io.File;
+import com.qualcomm.hardware.lynx.LynxNackException;
+import com.qualcomm.hardware.lynx.LynxUsbDevice;
+import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.lynx.commands.standard.LynxSetModuleLEDColorCommand;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -8,10 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.EventLoopManager;
-
-/**
- * Created by KJsMacbookAir on 10/10/17.
- */
+import com.qualcomm.ftccommon.SoundPlayer;
 
 @TeleOp(name="Teleop", group="Pushbot")
 public class Teleop extends OpMode
@@ -34,15 +36,19 @@ public class Teleop extends OpMode
     
     public Servo gate = null;
 
-    public double llockopen = 0.5;
-    public double llockclosed = 0.5;
-    public double rlockopen = 0.5;
-    public double rlockclosed = 0.5;
-    public double lwristup = 0.84;
+    public double llockopen = 0.2;
+    public double llockclosed = 1;
+    public double rlockopen = 0.9;
+    public double rlockclosed = 0.1;
+    public double lwristup = 1;
+    // dont touch
     public double lwristdown = 0; //0.1
-    public double rwristup = 0.05;
-    public double rwristdown = 0.80; //0.84
-
+    public double rwristup = 1;
+    // ok, u good
+    public double rwristdown = 0; //0.84
+    public double slowDown = 0.5;
+    private String soundPath = "/FIRST/blocks";
+    private File goldFile   = new File("/sdcard" + soundPath + "/1.mp3");
     @Override
     public void init()
     {
@@ -99,6 +105,8 @@ public class Teleop extends OpMode
         rlift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lslide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rslide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        // SoundPlayer.getInstance().startPlaying(hardwareMap.appContext, goldFile);
+        
     }
     @Override
     public void init_loop()
@@ -109,38 +117,23 @@ public class Teleop extends OpMode
     @Override
     public void start()
     {
-
+        
     }
     public void mecanumDrive_Cartesian(double x, double y, double rotation)
-
     {
-
         double wheelSpeeds[] = new double[4];
 
-
-
         wheelSpeeds[0] = x + y + rotation;
-
         wheelSpeeds[1] = -x + y - rotation;
-
         wheelSpeeds[2] = -x + y + rotation;
-
         wheelSpeeds[3] = x + y - rotation;
-
-
-
+        // 
         normalize(wheelSpeeds);
 
-
-
         fl.setPower(wheelSpeeds[0]);
-
         fr.setPower(wheelSpeeds[1]);
-
         bl.setPower(wheelSpeeds[2]);
-
         br.setPower(wheelSpeeds[3]);
-
     }   //mecanumDrive_Cartesian
 
 
@@ -192,37 +185,31 @@ public class Teleop extends OpMode
     public void loop()
     {
         // drive code
-        // final float Vx = -gamepad1.left_stick_x;
-        // final float Vy = -gamepad1.left_stick_y;
-        // final float w = gamepad1.right_stick_x;
-        // fl.setPower(Vy + Vx + w);
-        // fr.setPower(Vy - Vx - w);
-        // bl.setPower(Vy - Vx + w);
-        // br.setPower(Vy + Vx - w);
-        
-        // telemetry.addData("Vy: ", Vy);
-        // telemetry.addData("Vx: ", Vx);
-        // telemetry.addData("w: ", w);
         float leftY = -gamepad1.left_stick_y;
 
         float leftX = -gamepad1.left_stick_x;
 
         float turn = gamepad1.right_stick_x;
-
         
-
         telemetry.addData("GamePad Data: ", "G1LY: " + leftY + "G1LX: " + leftX + "G1Turn: " + turn);
         telemetry.addData("leftWrist Position, rWrist Position", lwrist.getPosition() + " and " + rwrist.getPosition());
-        mecanumDrive_Cartesian(leftX, leftY, turn);
+        if(gamepad1.right_bumper){
+            
+            mecanumDrive_Cartesian(slowDown * leftX, slowDown * leftY,slowDown *  turn);
+        }
+        else {
+            mecanumDrive_Cartesian(leftX, leftY, turn);
+        }
+        
         telemetry.update();
         // left lift
         if(gamepad2.left_bumper)
         {
-            llift.setPower(1);
+            llift.setPower(-1);
         }
-        else if(gamepad2.left_trigger > 0.2)
+        else if(gamepad2.left_trigger > 0)
         {
-            llift.setPower(-0.4);
+            llift.setPower(1);
         }
         else
         {
@@ -241,9 +228,9 @@ public class Teleop extends OpMode
         {
             rlift.setPower(1);
         }
-        else if(gamepad2.right_trigger > 0.2)
+        else if(gamepad2.right_trigger > 0)
         {
-            rlift.setPower(-0.4);
+            rlift.setPower(-1);
         }
         else
         {
@@ -251,8 +238,8 @@ public class Teleop extends OpMode
         }
 
         // intake slides
-        lslide.setPower(gamepad2.right_stick_y);
-        rslide.setPower(gamepad2.left_stick_y);
+        rslide.setPower(gamepad2.right_stick_y);
+        lslide.setPower(gamepad2.left_stick_y);
 
         // hanging lock
         if(gamepad2.b)
@@ -263,13 +250,13 @@ public class Teleop extends OpMode
         {
             hangpin.setPower(0);
         }
-
+        // hangpin.setPower(0);
         // intake
-        if(gamepad2.dpad_down)
+        if(gamepad2.dpad_up)
         {
             intake.setPower(0.8);
         }
-        else if(gamepad2.dpad_up)
+        else if(gamepad2.dpad_down)
         {
             intake.setPower(-0.8);
         }
@@ -277,7 +264,6 @@ public class Teleop extends OpMode
         {
             intake.setPower(0);
         }
-
         if(gamepad2.x) // lock lift
         {
             llock.setPosition(llockclosed);
@@ -286,19 +272,29 @@ public class Teleop extends OpMode
         else if(gamepad2.a) // unlock lift
         {
             llock.setPosition(llockopen);
-            rlock.setPosition(llockopen);
+            rlock.setPosition(rlockopen);
         }
 
-        // wrist position
-        if(gamepad2.dpad_left)
-        {
-            lwrist.setPosition(lwristup);
-            rwrist.setPosition(rwristup);
+        // wrist position Right works fine
+        // if(gamepad2.dpad_right)
+        // {
+        //     lwrist.setPosition(lwristdown);
+        //     rwrist.setPosition(rwristup);
+        // }
+        // //fix this, please
+        // else if(gamepad2.dpad_left)
+        // {
+        //     // lwrist.setPosition(lwristup);
+        //     rwrist.setPosition(rwristdown);
+        // }
+        // Right: flips in. Left: flips out
+        if(gamepad2.dpad_right) {
+            lwrist.setPosition(0);
+            
         }
-        else if(gamepad2.dpad_right)
-        {
-            lwrist.setPosition(lwristdown);
-            rwrist.setPosition(rwristdown);
+        else if(gamepad2.dpad_left) {
+            lwrist.setPosition(1);
+            
         }
     }
 }
