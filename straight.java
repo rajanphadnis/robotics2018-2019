@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 
 @Autonomous
-
 public class straight extends LinearOpMode {
     public PixyLego Pixy = new PixyLego();
     public DcMotor fr = null;
@@ -40,6 +39,7 @@ public class straight extends LinearOpMode {
     public double lwristdown = 0;
     public double rwristup = 0.05;
     public double rwristdown = 0.80;
+    public long starttime = 0;
 
     public double speedOne = 0.5;
 
@@ -328,43 +328,54 @@ public class straight extends LinearOpMode {
 
 
         // Wait for the game to start (driver presses PLAY)
-        waitForStart();
+        //waitForStart();
+        
+        while(!opModeIsActive() && !isStopRequested())
+        {
+            telemetry.addData("This", " is voodoo");
+            telemetry.update();
+        }
+        
+        
+        
         lwrist.setPosition(1);
         lwrist.setPosition(0);
+        starttime = System.currentTimeMillis();
         while(opModeIsActive()) {
             // telemetry.addData("# of objects = ", Pixy.getNumBlobs(1));
             // telemetry.addData("x = ", Pixy.getX(1));
-            // telemetry.addData("y = ", Pixy.getY(1));
+             telemetry.addData("y = ", Pixy.getY(1));
             // telemetry.addData("width = ", Pixy.getWidth(1));
             // telemetry.addData("height = ", Pixy.getHeight(1));
             // telemetry.addData("largest blob = ", Pixy.getLargestBlob());
-            // telemetry.update();
-            if (Pixy.getX(1) > minPixyVal && Pixy.getX(1) < maxPixyVal) {
+             telemetry.update();
+            if (Pixy.getX(1) > minPixyVal && Pixy.getX(1) < maxPixyVal && Pixy.getY(1) > 110) {
                 telemetry.addData("Position", "Centered");
                 telemetry.update();
                 break;
                 // forwards(200, 0.5);
             }
-            else if (Pixy.getX(1) > 0 && Pixy.getX(1) < minPixyVal) {
+            else if (Pixy.getX(1) > 0 && Pixy.getX(1) < minPixyVal && Pixy.getY(1) > 110) {
                 telemetry.addData("Position", "Right");
                 telemetry.update();
                 fr.setPower(turnSpeed);
                 fl.setPower(-turnSpeed);
                 br.setPower(turnSpeed);
                 bl.setPower(-turnSpeed);
-                
+                starttime = System.currentTimeMillis();
             }
-            else if (Pixy.getX(1) > maxPixyVal && Pixy.getX(1) < 255) {
+            else if (Pixy.getX(1) > maxPixyVal && Pixy.getX(1) < 255 && Pixy.getY(1) > 110) {
                 telemetry.addData("Position", "Left");
                 telemetry.update();
                 fr.setPower(-turnSpeed);
                 fl.setPower(turnSpeed);
                 br.setPower(-turnSpeed);
                 bl.setPower(turnSpeed);
+                starttime = System.currentTimeMillis();
             }
-            else {
+            else if(System.currentTimeMillis() - starttime > 500) {
                 if (!turnedRight) {
-                    turn(250, 0.5, false);
+                    turn(220, 0.5, false);
                     turnedRight = true;
                     try {
                         Thread.sleep(250);
@@ -375,7 +386,7 @@ public class straight extends LinearOpMode {
                     }
                 }
                 else if (!turnedLeft) {
-                    turn(350, 0.5, true);
+                    turn(245, 0.5, true);
                     turnedLeft = true;
                     try {
                         Thread.sleep(250);
@@ -386,6 +397,61 @@ public class straight extends LinearOpMode {
                     }
                 }
                 else {
+                    /*turnedRight = false;
+                    turnedLeft = false;
+                    while(opModeIsActive()) {
+                        if (Pixy.getX(2) > minPixyVal && Pixy.getX(2) < maxPixyVal) {
+                            telemetry.addData("Position", "Centered");
+                            telemetry.update();
+                            break;
+                            // forwards(200, 0.5);
+                        }
+                        else if (Pixy.getX(2) > 0 && Pixy.getX(2) < minPixyVal) {
+                            telemetry.addData("Position", "Right");
+                            telemetry.update();
+                            fr.setPower(turnSpeed);
+                            fl.setPower(-turnSpeed);
+                            br.setPower(turnSpeed);
+                            bl.setPower(-turnSpeed);
+                            
+                        }
+                        else if (Pixy.getX(2) > maxPixyVal && Pixy.getX(2) < 255) {
+                            telemetry.addData("Position", "Left");
+                            telemetry.update();
+                            fr.setPower(-turnSpeed);
+                            fl.setPower(turnSpeed);
+                            br.setPower(-turnSpeed);
+                            bl.setPower(turnSpeed);
+                        }
+                        else if(!turnedRight)
+                        {
+                            turn(200, 0.5, false);
+                            turnedRight = true;
+                            try {
+                                Thread.sleep(250);
+                            }
+                            catch (InterruptedException e) {
+                                telemetry.addData("Error", e);
+                                telemetry.update();
+                            }
+                        }
+                        else if(!turnedLeft)
+                        {
+                            turn(250, 0.5, false);
+                            turnedRight = true;
+                            try {
+                                Thread.sleep(250);
+                            }
+                            catch (InterruptedException e) {
+                                telemetry.addData("Error", e);
+                                telemetry.update();
+                            }
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }*/
                     break;
                 }
             }
