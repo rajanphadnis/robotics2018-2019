@@ -193,6 +193,13 @@ public class Teleop extends OpMode
         
         telemetry.addData("GamePad Data: ", "G1LY: " + leftY + "G1LX: " + leftX + "G1Turn: " + turn);
         telemetry.addData("leftWrist Position, rWrist Position", lwrist.getPosition() + " and " + rwrist.getPosition());
+        
+        /*
+        Controller layout and control feature switches
+        1: intake in and out should be right stick button
+        2: 
+        
+        */
         if(gamepad1.right_bumper){
             
             mecanumDrive_Cartesian(slowDown * leftX, slowDown * leftY,slowDown *  turn);
@@ -203,6 +210,15 @@ public class Teleop extends OpMode
         
         telemetry.update();
         // left lift
+        if (gamepad2.right_stick_button) {
+            intake.setPower(-0.8);
+        }
+        else if (gamepad2.left_stick_button) {
+            intake.setPower(0.8);
+        }
+        else {
+            intake.setPower(0);
+        }
         if(gamepad2.left_bumper)
         {
             llift.setPower(-1);
