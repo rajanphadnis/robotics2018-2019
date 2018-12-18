@@ -48,7 +48,7 @@ public class Teleop extends OpMode
     public double rwristdown = 0; //0.84
     public double slowDown = 0.5;
     private String soundPath = "/FIRST/blocks";
-    private File goldFile   = new File("/sdcard" + soundPath + "/1.mp3");
+    private File goldFile   = new File("/sdcard" + soundPath + "/boston.mp3");
     @Override
     public void init()
     {
@@ -117,8 +117,8 @@ public class Teleop extends OpMode
     @Override
     public void start()
     {
-        
     }
+    
     public void mecanumDrive_Cartesian(double x, double y, double rotation)
     {
         double wheelSpeeds[] = new double[4];
@@ -184,6 +184,7 @@ public class Teleop extends OpMode
     @Override
     public void loop()
     {
+        //SoundPlayer.getInstance().startPlaying(hardwareMap.appContext, goldFile);
         // drive code
         float leftY = -gamepad1.left_stick_y;
 
@@ -200,6 +201,7 @@ public class Teleop extends OpMode
         2: 
         
         */
+        intake.setPower(0);
         if(gamepad1.right_bumper){
             
             mecanumDrive_Cartesian(slowDown * leftX, slowDown * leftY,slowDown *  turn);
@@ -258,9 +260,13 @@ public class Teleop extends OpMode
         lslide.setPower(gamepad2.left_stick_y);
 
         // hanging lock
-        if(gamepad2.b)
+        if(gamepad2.dpad_down)
         {
             hangpin.setPower(1);
+        }
+        else if(gamepad2.dpad_up)
+        {
+            hangpin.setPower(-1);
         }
         else
         {
@@ -268,18 +274,18 @@ public class Teleop extends OpMode
         }
         // hangpin.setPower(0);
         // intake
-        if(gamepad2.dpad_up)
-        {
-            intake.setPower(0.8);
-        }
-        else if(gamepad2.dpad_down)
-        {
-            intake.setPower(-0.8);
-        }
-        else
-        {
-            intake.setPower(0);
-        }
+        // if(gamepad2.dpad_up)
+        // {
+        //     intake.setPower(0.8);
+        // }
+        // else if(gamepad2.dpad_down)
+        // {
+        //     intake.setPower(-0.8);
+        // }
+        // else
+        // {
+        //     intake.setPower(0);
+        // }
         if(gamepad2.x) // lock lift
         {
             llock.setPosition(llockclosed);
@@ -289,6 +295,9 @@ public class Teleop extends OpMode
         {
             llock.setPosition(llockopen);
             rlock.setPosition(rlockopen);
+        }
+        else if (gamepad2.b) {
+            SoundPlayer.getInstance().startPlaying(hardwareMap.appContext, goldFile);
         }
 
         // wrist position Right works fine

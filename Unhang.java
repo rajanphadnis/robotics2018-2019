@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import java.io.File;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gyroscope;
@@ -10,11 +14,9 @@ import com.qualcomm.robotcore.hardware.Blinker;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.robotcore.eventloop.EventLoopManager;
-import com.qualcomm.ftccommon.SoundPlayer;
 
 @Autonomous
-public class straight extends LinearOpMode {
+public class Unhang extends LinearOpMode {
     public PixyLego Pixy = new PixyLego();
     public DcMotor fr = null;
     public DcMotor fl = null;
@@ -51,12 +53,14 @@ public class straight extends LinearOpMode {
     public double minPixyVal = 122;
     public double maxPixyVal = 132;
     
-    public double turnSpeed = 0.1;
+    public double turnSpeed = 0.25;
     
     public boolean turnedRight = false;
     public boolean turnedLeft = false;
-    private String soundPath = "/FIRST/blocks";
-    private File goldFile   = new File("/sdcard" + soundPath + "/1.mp3");
+    
+    public Orientation orientation;
+    
+    public Orientation angleMissed;
     
     public void forwards(int ticks, double speed) {
         int flPos = fl.getCurrentPosition() + ticks;
@@ -77,8 +81,8 @@ public class straight extends LinearOpMode {
         br.setPower(speed);
         bl.setPower(speed);
         while (opModeIsActive() && (fr.isBusy() && fl.isBusy() && br.isBusy() && bl.isBusy())) {
-            telemetry.addData("Path1",  "Running to position");
-            telemetry.update();
+            // telemetry.addData("Path1",  "Running to position");
+            // telemetry.update();
             idle();
         }
         fr.setPower(0);
@@ -92,26 +96,26 @@ public class straight extends LinearOpMode {
         bl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void backwards(int ticks, double speed){
-        telemetry.addData("fr: ", fr.getCurrentPosition());
-        telemetry.update();
+        // telemetry.addData("fr: ", fr.getCurrentPosition());
+        // telemetry.update();
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        telemetry.addData("fr: ", fr.getCurrentPosition());
-        telemetry.update();
+        // telemetry.addData("fr: ", fr.getCurrentPosition());
+        // telemetry.update();
         fl.setTargetPosition(-ticks);
         fr.setTargetPosition(-ticks);
         bl.setTargetPosition(-ticks);
         br.setTargetPosition(-ticks);
-        telemetry.addData("fr: ", fr.getCurrentPosition());
-        telemetry.update();
+        // telemetry.addData("fr: ", fr.getCurrentPosition());
+        // telemetry.update();
         fl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         fr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         bl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         br.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        telemetry.addData("fr: ", fr.getCurrentPosition());
-        telemetry.update();
+        // telemetry.addData("fr: ", fr.getCurrentPosition());
+        // telemetry.update();
         fl.setPower(-speed);
         fr.setPower(-speed);
         bl.setPower(-speed);
@@ -119,8 +123,8 @@ public class straight extends LinearOpMode {
         while(fl.isBusy() && fr.isBusy() && bl.isBusy() && br.isBusy() && opModeIsActive())
         {
             idle();
-            telemetry.addData("fr: ", fr.getCurrentPosition());
-            telemetry.update();
+            // telemetry.addData("fr: ", fr.getCurrentPosition());
+            // telemetry.update();
         }
         fl.setPower(0);
         fr.setPower(0);
@@ -150,8 +154,8 @@ public class straight extends LinearOpMode {
         br.setPower(speed);
         bl.setPower(speed);
         while (opModeIsActive() && (fr.isBusy() && fl.isBusy() && br.isBusy() && bl.isBusy())) {
-            telemetry.addData("Path1",  "Running to position");
-            telemetry.update();
+            // telemetry.addData("Path1",  "Running to position");
+            // telemetry.update();
             idle();
         }
         fr.setPower(0);
@@ -183,8 +187,8 @@ public class straight extends LinearOpMode {
         br.setPower(speed);
         bl.setPower(speed);
         while (opModeIsActive() && (fr.isBusy() && fl.isBusy() && br.isBusy() && bl.isBusy())) {
-            telemetry.addData("Path1",  "Running to position");
-            telemetry.update();
+            // telemetry.addData("Path1",  "Running to position");
+            // telemetry.update();
             idle();
         }
         fr.setPower(0);
@@ -213,12 +217,12 @@ public class straight extends LinearOpMode {
             br.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             bl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             fr.setPower(speed);
-            fl.setPower(speed);
+            fl.setPower(-speed);
             br.setPower(speed);
-            bl.setPower(speed);
+            bl.setPower(-speed);
             while (opModeIsActive() && (fr.isBusy() && fl.isBusy() && br.isBusy() && bl.isBusy())) {
-                telemetry.addData("Path1",  "Running to position");
-                telemetry.update();
+                // telemetry.addData("Path1",  "Running to position");
+                // telemetry.update();
                 idle();
             }
             fr.setPower(0);
@@ -245,13 +249,13 @@ public class straight extends LinearOpMode {
             fl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             br.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             bl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            fr.setPower(speed);
+            fr.setPower(-speed);
             fl.setPower(speed);
-            br.setPower(speed);
+            br.setPower(-speed);
             bl.setPower(speed);
             while (opModeIsActive() && (fr.isBusy() && fl.isBusy() && br.isBusy() && bl.isBusy())) {
-                telemetry.addData("Path1",  "Running to position");
-                telemetry.update();
+                // telemetry.addData("Path1",  "Running to position");
+                // telemetry.update();
                 idle();
             }
             fr.setPower(0);
@@ -265,6 +269,180 @@ public class straight extends LinearOpMode {
             bl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
+    
+    public void spinleft(int ticks, double speed) {
+        fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fl.setTargetPosition(-ticks);
+        fr.setTargetPosition(ticks);
+        bl.setTargetPosition(-ticks);
+        br.setTargetPosition(ticks);
+        fl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        fr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        bl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        br.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        // telemetry.addData("fr: ", fr.getCurrentPosition());
+        // telemetry.update();
+        fl.setPower(-speed);
+        fr.setPower(speed);
+        bl.setPower(-speed);
+        br.setPower(speed);
+        while(fl.isBusy() && fr.isBusy() && bl.isBusy() && br.isBusy() && opModeIsActive())
+        {
+            idle();
+            // telemetry.addData("fr: ", fr.getCurrentPosition());
+            // telemetry.update();
+        }
+        fl.setPower(0);
+        fr.setPower(0);
+        bl.setPower(0);
+        br.setPower(0);
+        fl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        fr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    
+    public void spinleftback(int ticks, double speed) {
+        fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fl.setTargetPosition(-ticks);
+        fr.setTargetPosition(ticks);
+        bl.setTargetPosition(-ticks);
+        br.setTargetPosition(ticks);
+        fl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        fr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        bl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        br.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        // telemetry.addData("fr: ", fr.getCurrentPosition());
+        // telemetry.update();
+        fl.setPower(-speed);
+        fr.setPower(speed);
+        while(fl.isBusy() && fr.isBusy() && bl.isBusy() && br.isBusy() && opModeIsActive())
+        {
+            idle();
+            // telemetry.addData("fr: ", fr.getCurrentPosition());
+            // telemetry.update();
+        }
+        fl.setPower(0);
+        fr.setPower(0);
+        bl.setPower(0);
+        br.setPower(0);
+        fl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        fr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    
+    public void spinright(int ticks, double speed) {
+        fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fl.setTargetPosition(ticks);
+        fr.setTargetPosition(-ticks);
+        bl.setTargetPosition(ticks);
+        br.setTargetPosition(-ticks);
+        fl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        fr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        bl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        br.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        // telemetry.addData("fr: ", fr.getCurrentPosition());
+        // telemetry.update();
+        fl.setPower(speed);
+        fr.setPower(-speed);
+        bl.setPower(speed);
+        br.setPower(-speed);
+        while(fl.isBusy() && fr.isBusy() && bl.isBusy() && br.isBusy() && opModeIsActive())
+        {
+            idle();
+            // telemetry.addData("fr: ", fr.getCurrentPosition());
+            // telemetry.update();
+        }
+        fl.setPower(0);
+        fr.setPower(0);
+        bl.setPower(0);
+        br.setPower(0);
+        fl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        fr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    
+    public void slideright(int ticks, double speed) {
+        fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fl.setTargetPosition(ticks);
+        fr.setTargetPosition(-ticks);
+        bl.setTargetPosition(-ticks);
+        br.setTargetPosition(ticks);
+        fl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        fr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        bl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        br.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        // telemetry.addData("fr: ", fr.getCurrentPosition());
+        // telemetry.update();
+        fl.setPower(speed);
+        fr.setPower(-speed);
+        bl.setPower(-speed);
+        br.setPower(speed);
+        while(fl.isBusy() && fr.isBusy() && bl.isBusy() && br.isBusy() && opModeIsActive())
+        {
+            idle();
+            // telemetry.addData("fr: ", fr.getCurrentPosition());
+            // telemetry.update();
+        }
+        fl.setPower(0);
+        fr.setPower(0);
+        bl.setPower(0);
+        br.setPower(0);
+        fl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        fr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    
+    public void slideleft(int ticks, double speed) {
+        fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fl.setTargetPosition(-ticks);
+        fr.setTargetPosition(ticks);
+        bl.setTargetPosition(ticks);
+        br.setTargetPosition(-ticks);
+        fl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        fr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        bl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        br.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        // telemetry.addData("fr: ", fr.getCurrentPosition());
+        // telemetry.update();
+        fl.setPower(-speed);
+        fr.setPower(speed);
+        bl.setPower(speed);
+        br.setPower(-speed);
+        while(fl.isBusy() && fr.isBusy() && bl.isBusy() && br.isBusy() && opModeIsActive())
+        {
+            idle();
+            // telemetry.addData("fr: ", fr.getCurrentPosition());
+            // telemetry.update();
+        }
+        fl.setPower(0);
+        fr.setPower(0);
+        bl.setPower(0);
+        br.setPower(0);
+        fl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        fr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    
     @Override
     public void runOpMode() {
         Pixy.init(hardwareMap, "Pixy");
@@ -340,129 +518,91 @@ public class straight extends LinearOpMode {
             telemetry.addData("This", " is voodoo");
             telemetry.update();
         }
-        
-        // SoundPlayer.getInstance().startPlaying(hardwareMap.appContext, goldFile);
-        
-        
-        
-        lwrist.setPosition(1);
-        lwrist.setPosition(0);
-        starttime = System.currentTimeMillis();
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+        Orientation angles2 = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        telemetry.addData("Data", "First Angle: " + angles2.firstAngle);
+        telemetry.update();
+        //backwards(100, 1);
+        spinleftback(250, 1);
+        hangpin.setPower(1);
+        try
+        {
+            Thread.sleep(250);
+        }
+        catch(InterruptedException e)
+        {
+            
+        }
+        slideright(200, 1);
+        spinright(1000, 0.5);
+        hangpin.setPower(0);
+        /*Orientation angles4 = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        telemetry.addData("Data", "First Angle: " + angles4.firstAngle);
+        telemetry.update();
+        angleMissed = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        while (opModeIsActive() && angleMissed.firstAngle < 0); {
+            fr.setPower(1);
+            fl.setPower(-1);
+            br.setPower(1);
+            bl.setPower(-1);
+            angleMissed = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            telemetry.addData("thifbsj", "is cool");
+            telemetry.update();
+        }
         while(opModeIsActive()) {
-            // telemetry.addData("# of objects = ", Pixy.getNumBlobs(1));
-            // telemetry.addData("x = ", Pixy.getX(1));
-             telemetry.addData("y = ", Pixy.getY(1));
-            // telemetry.addData("width = ", Pixy.getWidth(1));
-            // telemetry.addData("height = ", Pixy.getHeight(1));
-            // telemetry.addData("largest blob = ", Pixy.getLargestBlob());
-             telemetry.update();
-            if (Pixy.getX(1) > minPixyVal && Pixy.getX(1) < maxPixyVal && Pixy.getY(1) > 110) {
-                telemetry.addData("Position", "Centered");
-                telemetry.update();
-                break;
-                // forwards(200, 0.5);
-            }
-            else if (Pixy.getX(1) > 0 && Pixy.getX(1) < minPixyVal && Pixy.getY(1) > 110) {
-                telemetry.addData("Position", "Right");
-                telemetry.update();
+            // Orientation angles3 = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            telemetry.addData("Data", "First Angle: " + imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+            telemetry.update();
+            fr.setPower(0);
+            fl.setPower(-0);
+            br.setPower(0);
+            bl.setPower(-0);
+        }
+        telemetry.addData("thifbsj", "is not cool");
+        telemetry.update();*/
+        spinright(750, 0.5);
+        long starttime = System.currentTimeMillis();
+        boolean found = true;
+        while(!(Pixy.getX(1) > minPixyVal && Pixy.getX(1) < maxPixyVal && Pixy.getY(1) > 110) && opModeIsActive())
+        {
+            
+            if (Pixy.getX(1) > 0 && Pixy.getX(1) < minPixyVal && Pixy.getY(1) > 110) {
                 fr.setPower(turnSpeed);
                 fl.setPower(-turnSpeed);
                 br.setPower(turnSpeed);
                 bl.setPower(-turnSpeed);
-                starttime = System.currentTimeMillis();
             }
             else if (Pixy.getX(1) > maxPixyVal && Pixy.getX(1) < 255 && Pixy.getY(1) > 110) {
-                telemetry.addData("Position", "Left");
-                telemetry.update();
                 fr.setPower(-turnSpeed);
                 fl.setPower(turnSpeed);
                 br.setPower(-turnSpeed);
                 bl.setPower(turnSpeed);
-                starttime = System.currentTimeMillis();
             }
-            else if(System.currentTimeMillis() - starttime > 500) {
-                if (!turnedRight) {
-                    turn(220, 0.5, false);
-                    turnedRight = true;
-                    try {
-                        Thread.sleep(250);
-                    }
-                    catch (InterruptedException e) {
-                        telemetry.addData("Error", e);
-                        telemetry.update();
-                    }
-                }
-                else if (!turnedLeft) {
-                    turn(245, 0.5, true);
-                    turnedLeft = true;
-                    try {
-                        Thread.sleep(250);
-                    }
-                    catch (InterruptedException e) {
-                        telemetry.addData("Error", e);
-                        telemetry.update();
-                    }
-                }
-                else {
-                    /*turnedRight = false;
-                    turnedLeft = false;
-                    while(opModeIsActive()) {
-                        if (Pixy.getX(2) > minPixyVal && Pixy.getX(2) < maxPixyVal) {
-                            telemetry.addData("Position", "Centered");
-                            telemetry.update();
-                            break;
-                            // forwards(200, 0.5);
-                        }
-                        else if (Pixy.getX(2) > 0 && Pixy.getX(2) < minPixyVal) {
-                            telemetry.addData("Position", "Right");
-                            telemetry.update();
-                            fr.setPower(turnSpeed);
-                            fl.setPower(-turnSpeed);
-                            br.setPower(turnSpeed);
-                            bl.setPower(-turnSpeed);
-                            
-                        }
-                        else if (Pixy.getX(2) > maxPixyVal && Pixy.getX(2) < 255) {
-                            telemetry.addData("Position", "Left");
-                            telemetry.update();
-                            fr.setPower(-turnSpeed);
-                            fl.setPower(turnSpeed);
-                            br.setPower(-turnSpeed);
-                            bl.setPower(turnSpeed);
-                        }
-                        else if(!turnedRight)
-                        {
-                            turn(200, 0.5, false);
-                            turnedRight = true;
-                            try {
-                                Thread.sleep(250);
-                            }
-                            catch (InterruptedException e) {
-                                telemetry.addData("Error", e);
-                                telemetry.update();
-                            }
-                        }
-                        else if(!turnedLeft)
-                        {
-                            turn(250, 0.5, false);
-                            turnedRight = true;
-                            try {
-                                Thread.sleep(250);
-                            }
-                            catch (InterruptedException e) {
-                                telemetry.addData("Error", e);
-                                telemetry.update();
-                            }
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }*/
-                    break;
-                }
+            else
+            {
+                fr.setPower(-turnSpeed);
+                fl.setPower(turnSpeed);
+                br.setPower(-turnSpeed);
+                bl.setPower(turnSpeed);
+            }
+            if(System.currentTimeMillis() - starttime > 3000)
+            {
+                found = false;
+                break;
             }
         }
-        backwards(1000, 0.2);
+        if(found)
+        {
+            backwards(1000, 0.2);
+            telemetry.addData("Working", " good");
+            telemetry.update();
+        }
+        else
+        {
+            spinleft(750, 0.5);
+            backwards(1000, 0.2);
+        }
     }
 }
