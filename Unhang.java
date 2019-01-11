@@ -26,6 +26,8 @@ public class Unhang extends LinearOpMode {
     public DcMotor rlift = null;
     public DcMotor lslide = null;
     public DcMotor rslide = null;
+    
+    public long starttime2 = 0;
 
     public CRServo hangpin = null;
     public CRServo intake = null;
@@ -36,10 +38,10 @@ public class Unhang extends LinearOpMode {
     
     public Servo gate = null;
 
-    public double llockopen = 0.5;
-    public double llockclosed = 0.5;
-    public double rlockopen = 0.5;
-    public double rlockclosed = 0.5;
+    public double llockopen = 0.2;
+    public double llockclosed = 1;
+    public double rlockopen = 0.9;
+    public double rlockclosed = 0.1;
     public double lwristup = 0.84;
     public double lwristdown = 0;
     public double rwristup = 0.05;
@@ -475,7 +477,7 @@ public class Unhang extends LinearOpMode {
         fl.setDirection(DcMotorSimple.Direction.REVERSE);
         br.setDirection(DcMotorSimple.Direction.FORWARD);
         bl.setDirection(DcMotorSimple.Direction.REVERSE);
-        llift.setDirection(DcMotorSimple.Direction.FORWARD);
+        llift.setDirection(DcMotorSimple.Direction.REVERSE);
         rlift.setDirection(DcMotorSimple.Direction.FORWARD);
         lslide.setDirection(DcMotorSimple.Direction.REVERSE);
         rslide.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -512,6 +514,8 @@ public class Unhang extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         //waitForStart();
+        rlock.setPosition(rlockopen);
+        llock.setPosition(llockopen);
         
         while(!opModeIsActive() && !isStopRequested())
         {
@@ -525,43 +529,121 @@ public class Unhang extends LinearOpMode {
         telemetry.addData("Data", "First Angle: " + angles2.firstAngle);
         telemetry.update();
         //backwards(100, 1);
-        spinleftback(250, 1);
-        hangpin.setPower(1);
-        try
+        llift.setPower(-1);
+        rlift.setPower(-1);
+        rlock.setPosition(rlockclosed);
+        llock.setPosition(llockclosed);
+        llift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rlift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        /*try
         {
-            Thread.sleep(250);
+            //Thread.sleep(1000);
         }
         catch(InterruptedException e)
         {
-            
+            fr.setPower(0);
+            fl.setPower(0);
+            br.setPower(0);
+            bl.setPower(0);
+            llift.setPower(0);
+            rlift.setPower(0);
+            lslide.setPower(0);
+            rslide.setPower(0);
+            hangpin.setPower(0);
+            intake.setPower(0);
+        }*/
+        starttime2 = System.currentTimeMillis();
+        while(System.currentTimeMillis() - starttime2 < 1000 && opModeIsActive())
+        {
+            telemetry.addData("This", " is voodoo");
+            telemetry.update();
+            idle();
+        }
+        llift.setPower(0.1);
+        rlift.setPower(0.1);
+        fl.setPower(0.25);
+        fr.setPower(0.25);
+        /*try
+        {
+            //Thread.sleep(2000);
+        }
+        catch(InterruptedException e)
+        {
+            fr.setPower(0);
+            fl.setPower(0);
+            br.setPower(0);
+            bl.setPower(0);
+            llift.setPower(0);
+            rlift.setPower(0);
+            lslide.setPower(0);
+            rslide.setPower(0);
+            hangpin.setPower(0);
+            intake.setPower(0);
+        }*/
+        starttime2 = System.currentTimeMillis();
+        while(System.currentTimeMillis() - starttime2 < 2000 && opModeIsActive())
+        {
+            telemetry.addData("This", " is voodoo");
+            telemetry.update();
+            idle();
+        }
+        llift.setPower(0);
+        rlift.setPower(0);
+        /*try
+        {
+            //Thread.sleep(5000);
+        }
+        catch(InterruptedException e)
+        {
+            fr.setPower(0);
+            fl.setPower(0);
+            br.setPower(0);
+            bl.setPower(0);
+            llift.setPower(0);
+            rlift.setPower(0);
+            lslide.setPower(0);
+            rslide.setPower(0);
+            hangpin.setPower(0);
+            intake.setPower(0);
+        }*/
+        starttime2 = System.currentTimeMillis();
+        while(System.currentTimeMillis() - starttime2 < 5000 && opModeIsActive())
+        {
+            telemetry.addData("This", " is voodoo");
+            telemetry.update();
+            idle();
+        }
+        llift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rlift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        spinleftback(250, 1);
+        hangpin.setPower(1);
+        /*try
+        {
+            //Thread.sleep(250);
+        }
+        catch(InterruptedException e)
+        {
+            fr.setPower(0);
+            fl.setPower(0);
+            br.setPower(0);
+            bl.setPower(0);
+            llift.setPower(0);
+            rlift.setPower(0);
+            lslide.setPower(0);
+            rslide.setPower(0);
+            hangpin.setPower(0);
+            intake.setPower(0);
+        }*/
+        starttime2 = System.currentTimeMillis();
+        while(System.currentTimeMillis() - starttime2 < 250 && opModeIsActive())
+        {
+            telemetry.addData("This", " is voodoo");
+            telemetry.update();
+            idle();
         }
         slideright(200, 1);
         spinright(1000, 0.5);
         hangpin.setPower(0);
-        /*Orientation angles4 = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        telemetry.addData("Data", "First Angle: " + angles4.firstAngle);
-        telemetry.update();
-        angleMissed = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        while (opModeIsActive() && angleMissed.firstAngle < 0); {
-            fr.setPower(1);
-            fl.setPower(-1);
-            br.setPower(1);
-            bl.setPower(-1);
-            angleMissed = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            telemetry.addData("thifbsj", "is cool");
-            telemetry.update();
-        }
-        while(opModeIsActive()) {
-            // Orientation angles3 = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            telemetry.addData("Data", "First Angle: " + imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
-            telemetry.update();
-            fr.setPower(0);
-            fl.setPower(-0);
-            br.setPower(0);
-            bl.setPower(-0);
-        }
-        telemetry.addData("thifbsj", "is not cool");
-        telemetry.update();*/
         spinright(750, 0.5);
         long starttime = System.currentTimeMillis();
         boolean found = true;

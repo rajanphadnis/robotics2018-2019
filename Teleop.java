@@ -47,6 +47,8 @@ public class Teleop extends OpMode
     // ok, u good
     public double rwristdown = 0; //0.84
     public double slowDown = 0.5;
+    public double deadZoneHigh = 0.5;
+    public double deadZoneLow= -0.5;
     private String soundPath = "/FIRST/blocks";
     private File goldFile   = new File("/sdcard" + soundPath + "/boston.mp3");
     @Override
@@ -192,8 +194,8 @@ public class Teleop extends OpMode
 
         float turn = gamepad1.right_stick_x;
         
-        telemetry.addData("GamePad Data: ", "G1LY: " + leftY + "G1LX: " + leftX + "G1Turn: " + turn);
-        telemetry.addData("leftWrist Position, rWrist Position", lwrist.getPosition() + " and " + rwrist.getPosition());
+        // telemetry.addData("GamePad Data: ", "G1LY: " + leftY + "G1LX: " + leftX + "G1Turn: " + turn);
+        // telemetry.addData("leftWrist Position, rWrist Position", lwrist.getPosition() + " and " + rwrist.getPosition());
         
         /*
         Controller layout and control feature switches
@@ -256,8 +258,26 @@ public class Teleop extends OpMode
         }
 
         // intake slides
-        rslide.setPower(gamepad2.right_stick_y);
-        lslide.setPower(gamepad2.left_stick_y);
+        if (gamepad2.right_stick_y < 0.5 && gamepad2.right_stick_y > -0.5 && gamepad2.left_stick_y < 0.5 && gamepad2.left_stick_y > -0.5) {
+            rslide.setPower(0);
+            lslide.setPower(0);
+        }
+        // else if (gamepad2.left_stick_y < 0.5 && gamepad2.left_stick_y > -0.5) {
+        //     // rslide.setPower(0);
+        //     lslide.setPower(0);
+        // }
+        // else if (gamepad2.right_stick_y > deadZoneHigh && gamepad2.right_stick_y < deadZoneLow && gamepad2.left_stick_y > deadZoneHigh && gamepad2.left_stick_y < deadZoneLow){
+        //     rslide.setPower(gamepad2.right_stick_y);
+        //     lslide.setPower(gamepad2.left_stick_y);
+        // }
+        else {
+            rslide.setPower(gamepad2.right_stick_y);
+            lslide.setPower(gamepad2.left_stick_y);
+        }
+        telemetry.addData("DATA: ", gamepad2.right_stick_y);
+        telemetry.addData("DATA: ", gamepad2.left_stick_y);
+        telemetry.update();
+        
 
         // hanging lock
         if(gamepad2.dpad_down)
