@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.ServoImpl;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 import java.io.File;
 import com.qualcomm.hardware.lynx.LynxNackException;
 import com.qualcomm.hardware.lynx.LynxUsbDevice;
@@ -40,15 +42,19 @@ public class Teleop extends OpMode
     public double llockclosed = 1;
     public double rlockopen = 0.9;
     public double rlockclosed = 0.1;
-    public double lwristup = 1;
+    public double lwristup = 0.23;
     // dont touch
-    public double lwristdown = 0; //0.1
+    public double lwristdown = 1; //0.1
     public double rwristup = 1;
     // ok, u good
-    public double rwristdown = 0; //0.84
+    public double rwristdown = 0.075; //0.84
     public double slowDown = 0.5;
     public double deadZoneHigh = 0.5;
     public double deadZoneLow= -0.5;
+    public long wristtime = 0;
+    public boolean wristdown = false;
+    public boolean waiting = true;
+    public boolean waiting2 = true;
     private String soundPath = "/FIRST/blocks";
     private File goldFile   = new File("/sdcard" + soundPath + "/boston.mp3");
     @Override
@@ -240,7 +246,7 @@ public class Teleop extends OpMode
             gate.setPosition(0);
         }
         else {
-            gate.setPosition(0.5);
+            gate.setPosition(0.75);
         }
 
         // right lift
@@ -321,25 +327,60 @@ public class Teleop extends OpMode
         }
 
         // wrist position Right works fine
-        // if(gamepad2.dpad_right)
-        // {
-        //     lwrist.setPosition(lwristdown);
-        //     rwrist.setPosition(rwristup);
-        // }
-        // //fix this, please
-        // else if(gamepad2.dpad_left)
-        // {
-        //     // lwrist.setPosition(lwristup);
-        //     rwrist.setPosition(rwristdown);
-        // }
-        // Right: flips in. Left: flips out
-        if(gamepad2.dpad_right) {
-            lwrist.setPosition(0);
-            
+        // rwrist.setPosition(rwristdown);
+        if(gamepad2.dpad_right)
+        {
+             if(wristdown)
+             {
+                 rwrist.setPosition(rwristup);
+                 wristtime = System.currentTimeMillis();
+                 wristdown = false;
+                 waiting = true;
+                 waiting2 = true;
+             }
+         }
+         //fix this, please
+        else if(gamepad2.dpad_left)
+        {
+            if(!wristdown)
+             {
+                 lwrist.setPosition(lwristdown);
+                 wristtime = System.currentTimeMillis();
+                 wristdown = true;
+                 waiting = true;
+                 waiting2 = true;
+             }
         }
-        else if(gamepad2.dpad_left) {
-            lwrist.setPosition(1);
-            
+         if(!wristdown && System.currentTimeMillis() - wristtime > 500 && waiting)
+         {
+             if(waiting2)
+             {
+                 lwrist.getController().pwmEnable();
+                 lwrist.setPosition(lwristup);
+                 waiting2 = false;
+             }
+             if(System.currentTimeMillis() - wristtime > 1000)
+             {
+                rwrist.getController().pwmDisable();
+                lwrist.setPosition(lwristup);
+                waiting = false;
+             }
+         }
+         if(wristdown && System.currentTimeMillis() - wristtime > 500 && waiting)
+         {
+             
+             if(waiting2)
+             {
+                 rwrist.getController().pwmEnable();
+                 rwrist.setPosition(rwristdown);
+                 waiting2 = false;
+             }
+             if(System.currentTimeMillis() - wristtime > 1000)
+             {
+                 lwrist.getController().pwmDisable();
+                 rwrist.setPosition(rwristdown);
+                 waiting = false;
+             }
         }
     }
 }

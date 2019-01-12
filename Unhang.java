@@ -664,10 +664,10 @@ public class Unhang extends LinearOpMode {
             }
             else
             {
-                fr.setPower(-turnSpeed);
-                fl.setPower(turnSpeed);
-                br.setPower(-turnSpeed);
-                bl.setPower(turnSpeed);
+                fr.setPower(-0.4);
+                fl.setPower(0.4);
+                br.setPower(-0.4);
+                bl.setPower(0.4);
             }
             if(System.currentTimeMillis() - starttime > 3000)
             {
