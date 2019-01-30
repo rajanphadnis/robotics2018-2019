@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 
 @Autonomous
-public class Unhang extends LinearOpMode {
+public class PlzWork extends LinearOpMode {
     public PixyLego Pixy = new PixyLego();
     public DcMotor fr = null;
     public DcMotor fl = null;
@@ -38,7 +38,7 @@ public class Unhang extends LinearOpMode {
     
     public Servo gate = null;
 
-    public double llockopen = 0.2;
+    public double llockopen = 0.25;
     public double llockclosed = 1;
     public double rlockopen = 0.9;
     public double rlockclosed = 0.1;
@@ -65,37 +65,44 @@ public class Unhang extends LinearOpMode {
     public Orientation angleMissed;
     
     public void forwards(int ticks, double speed) {
-        int flPos = fl.getCurrentPosition() + ticks;
-        int frPos = fr.getCurrentPosition() + ticks;
-        int blPos = bl.getCurrentPosition() + ticks;
-        int brPos = br.getCurrentPosition() + ticks;
-        fr.setTargetPosition(flPos);
-        fl.setTargetPosition(frPos);
-        br.setTargetPosition(blPos);
-        bl.setTargetPosition(brPos);
-        // Turn On RUN_TO_POSITION
-        fr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        // telemetry.addData("fr: ", fr.getCurrentPosition());
+        // telemetry.update();
+        fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        // telemetry.addData("fr: ", fr.getCurrentPosition());
+        // telemetry.update();
+        fl.setTargetPosition(ticks);
+        fr.setTargetPosition(ticks);
+        bl.setTargetPosition(ticks);
+        br.setTargetPosition(ticks);
+        // telemetry.addData("fr: ", fr.getCurrentPosition());
+        // telemetry.update();
         fl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        br.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        fr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         bl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        fr.setPower(speed);
+        br.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        // telemetry.addData("fr: ", fr.getCurrentPosition());
+        // telemetry.update();
         fl.setPower(speed);
-        br.setPower(speed);
+        fr.setPower(speed);
         bl.setPower(speed);
-        while (opModeIsActive() && (fr.isBusy() && fl.isBusy() && br.isBusy() && bl.isBusy())) {
-            // telemetry.addData("Path1",  "Running to position");
-            // telemetry.update();
+        br.setPower(speed);
+        while(fl.isBusy() && fr.isBusy() && bl.isBusy() && br.isBusy() && opModeIsActive())
+        {
             idle();
+            // telemetry.addData("fr: ", fr.getCurrentPosition());
+            // telemetry.update();
         }
-        fr.setPower(0);
         fl.setPower(0);
-        br.setPower(0);
+        fr.setPower(0);
         bl.setPower(0);
-        // Turn off RUN_TO_POSITION
-        fr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        br.setPower(0);
         fl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        br.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        fr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         bl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void backwards(int ticks, double speed){
         // telemetry.addData("fr: ", fr.getCurrentPosition());
@@ -615,7 +622,7 @@ public class Unhang extends LinearOpMode {
         }
         llift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rlift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        spinleftback(450, 1); // 250
+        spinleftback(350, 1);
         hangpin.setPower(1);
         /*try
         {
@@ -635,16 +642,50 @@ public class Unhang extends LinearOpMode {
             intake.setPower(0);
         }*/
         starttime2 = System.currentTimeMillis();
-        while(System.currentTimeMillis() - starttime2 < 250 && opModeIsActive())
+        while(System.currentTimeMillis() - starttime2 < 400 && opModeIsActive())
         {
             telemetry.addData("This", " is voodoo");
             telemetry.update();
             idle();
         }
         slideright(200, 1);
-        spinright(800, 0.5); // 1000
+        //spinright(1100, 0.5); // was right
+        starttime2 = System.currentTimeMillis();
+        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fr.setPower(-0.5);
+        br.setPower(-0.5);
+        fl.setPower(0.5);
+        bl.setPower(0.5);
+        while(System.currentTimeMillis() - starttime2 < 2000 && opModeIsActive())
+        {
+            telemetry.addData("This", " is voodoo");
+            telemetry.update();
+            idle();
+        }
+        fr.setPower(0);
+        br.setPower(0);
+        fl.setPower(0);
+        bl.setPower(0);
         hangpin.setPower(0);
-        spinright(750, 0.5);
+        //spinright(1000, 0.5); // was right
+        starttime2 = System.currentTimeMillis();
+        fr.setPower(0.4);
+        fl.setPower(0.4);
+        br.setPower(0.4);
+        bl.setPower(0.4);
+        while(opModeIsActive() && System.currentTimeMillis() - starttime2 < 2000) // 
+        {
+            idle();
+        }
+        fr.setPower(0);
+        fl.setPower(0);
+        br.setPower(0);
+        bl.setPower(0);
+        backwards(125, 1);
+        ///////////////////////////////////////////////////////////////////////////
         long starttime = System.currentTimeMillis();
         boolean found = true;
         while(!(Pixy.getX(1) > minPixyVal && Pixy.getX(1) < maxPixyVal && Pixy.getY(1) > 110) && opModeIsActive())
@@ -662,14 +703,28 @@ public class Unhang extends LinearOpMode {
                 br.setPower(-turnSpeed);
                 bl.setPower(turnSpeed);
             }
+            else if(System.currentTimeMillis() - starttime < 800)
+            {
+                fr.setPower(-0.3);
+                fl.setPower(0.3);
+                br.setPower(-0.3);
+                bl.setPower(0.3);
+            }
+            else if(System.currentTimeMillis() - starttime > 1300)
+            {
+                fr.setPower(0.3);
+                fl.setPower(-0.3);
+                br.setPower(0.3);
+                bl.setPower(-0.3);
+            }
             else
             {
-                fr.setPower(-0.4);
-                fl.setPower(0.4);
-                br.setPower(-0.4);
-                bl.setPower(0.4);
+                fr.setPower(0);
+                fl.setPower(0);
+                br.setPower(0);
+                bl.setPower(0);
             }
-            if(System.currentTimeMillis() - starttime > 3000)
+            if(System.currentTimeMillis() - starttime > 3200)
             {
                 found = false;
                 break;
@@ -683,7 +738,7 @@ public class Unhang extends LinearOpMode {
         }
         else
         {
-            spinleft(750, 0.5);
+            spinright(600, 0.5);
             backwards(1000, 0.2);
         }
     }
