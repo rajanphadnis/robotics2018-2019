@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 
 @Autonomous
-public class Unhang extends LinearOpMode {
+public class SpinTest extends LinearOpMode {
     public PixyLego Pixy = new PixyLego();
     public DcMotor fr = null;
     public DcMotor fl = null;
@@ -38,7 +38,7 @@ public class Unhang extends LinearOpMode {
     
     public Servo gate = null;
 
-    public double llockopen = 0.2;
+    public double llockopen = 0.25;
     public double llockclosed = 1;
     public double rlockopen = 0.9;
     public double rlockclosed = 0.1;
@@ -65,37 +65,44 @@ public class Unhang extends LinearOpMode {
     public Orientation angleMissed;
     
     public void forwards(int ticks, double speed) {
-        int flPos = fl.getCurrentPosition() + ticks;
-        int frPos = fr.getCurrentPosition() + ticks;
-        int blPos = bl.getCurrentPosition() + ticks;
-        int brPos = br.getCurrentPosition() + ticks;
-        fr.setTargetPosition(flPos);
-        fl.setTargetPosition(frPos);
-        br.setTargetPosition(blPos);
-        bl.setTargetPosition(brPos);
-        // Turn On RUN_TO_POSITION
-        fr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        // telemetry.addData("fr: ", fr.getCurrentPosition());
+        // telemetry.update();
+        fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        // telemetry.addData("fr: ", fr.getCurrentPosition());
+        // telemetry.update();
+        fl.setTargetPosition(ticks);
+        fr.setTargetPosition(ticks);
+        bl.setTargetPosition(ticks);
+        br.setTargetPosition(ticks);
+        // telemetry.addData("fr: ", fr.getCurrentPosition());
+        // telemetry.update();
         fl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        br.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        fr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         bl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        fr.setPower(speed);
+        br.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        // telemetry.addData("fr: ", fr.getCurrentPosition());
+        // telemetry.update();
         fl.setPower(speed);
-        br.setPower(speed);
+        fr.setPower(speed);
         bl.setPower(speed);
-        while (opModeIsActive() && (fr.isBusy() && fl.isBusy() && br.isBusy() && bl.isBusy())) {
-            // telemetry.addData("Path1",  "Running to position");
-            // telemetry.update();
+        br.setPower(speed);
+        while(fl.isBusy() && fr.isBusy() && bl.isBusy() && br.isBusy() && opModeIsActive())
+        {
             idle();
+            // telemetry.addData("fr: ", fr.getCurrentPosition());
+            // telemetry.update();
         }
-        fr.setPower(0);
         fl.setPower(0);
-        br.setPower(0);
+        fr.setPower(0);
         bl.setPower(0);
-        // Turn off RUN_TO_POSITION
-        fr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        br.setPower(0);
         fl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        br.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        fr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         bl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void backwards(int ticks, double speed){
         // telemetry.addData("fr: ", fr.getCurrentPosition());
@@ -510,181 +517,30 @@ public class Unhang extends LinearOpMode {
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-
-
-        // Wait for the game to start (driver presses PLAY)
-        //waitForStart();
-        rlock.setPosition(rlockopen);
-        llock.setPosition(llockopen);
         
         while(!opModeIsActive() && !isStopRequested())
         {
             telemetry.addData("This", " is voodoo");
             telemetry.update();
         }
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
-        Orientation angles2 = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        telemetry.addData("Data", "First Angle: " + angles2.firstAngle);
-        telemetry.update();
-        //backwards(100, 1);
-        llift.setPower(-1);
-        rlift.setPower(-1);
-        rlock.setPosition(rlockclosed);
-        llock.setPosition(llockclosed);
-        llift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        rlift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        /*try
-        {
-            //Thread.sleep(1000);
-        }
-        catch(InterruptedException e)
-        {
-            fr.setPower(0);
-            fl.setPower(0);
-            br.setPower(0);
-            bl.setPower(0);
-            llift.setPower(0);
-            rlift.setPower(0);
-            lslide.setPower(0);
-            rslide.setPower(0);
-            hangpin.setPower(0);
-            intake.setPower(0);
-        }*/
         starttime2 = System.currentTimeMillis();
-        while(System.currentTimeMillis() - starttime2 < 1000 && opModeIsActive())
+        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fr.setPower(-0.5);
+        br.setPower(-0.5);
+        fl.setPower(0.5);
+        bl.setPower(0.5);
+        while(System.currentTimeMillis() - starttime2 < 1800 && opModeIsActive())
         {
             telemetry.addData("This", " is voodoo");
             telemetry.update();
             idle();
         }
-        llift.setPower(0.1);
-        rlift.setPower(0.1);
-        //fl.setPower(0.25);
-        //fr.setPower(0.25);
-        /*try
-        {
-            //Thread.sleep(2000);
-        }
-        catch(InterruptedException e)
-        {
-            fr.setPower(0);
-            fl.setPower(0);
-            br.setPower(0);
-            bl.setPower(0);
-            llift.setPower(0);
-            rlift.setPower(0);
-            lslide.setPower(0);
-            rslide.setPower(0);
-            hangpin.setPower(0);
-            intake.setPower(0);
-        }*/
-        starttime2 = System.currentTimeMillis();
-        while(System.currentTimeMillis() - starttime2 < 2000 && opModeIsActive())
-        {
-            telemetry.addData("This", " is voodoo");
-            telemetry.update();
-            idle();
-        }
-        llift.setPower(0);
-        rlift.setPower(0);
-        /*try
-        {
-            //Thread.sleep(5000);
-        }
-        catch(InterruptedException e)
-        {
-            fr.setPower(0);
-            fl.setPower(0);
-            br.setPower(0);
-            bl.setPower(0);
-            llift.setPower(0);
-            rlift.setPower(0);
-            lslide.setPower(0);
-            rslide.setPower(0);
-            hangpin.setPower(0);
-            intake.setPower(0);
-        }*/
-        starttime2 = System.currentTimeMillis();
-        while(System.currentTimeMillis() - starttime2 < 2000 && opModeIsActive())
-        {
-            telemetry.addData("This", " is voodoo");
-            telemetry.update();
-            idle();
-        }
-        llift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rlift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        spinleftback(450, 1); // 250
-        hangpin.setPower(1);
-        /*try
-        {
-            //Thread.sleep(250);
-        }
-        catch(InterruptedException e)
-        {
-            fr.setPower(0);
-            fl.setPower(0);
-            br.setPower(0);
-            bl.setPower(0);
-            llift.setPower(0);
-            rlift.setPower(0);
-            lslide.setPower(0);
-            rslide.setPower(0);
-            hangpin.setPower(0);
-            intake.setPower(0);
-        }*/
-        starttime2 = System.currentTimeMillis();
-        while(System.currentTimeMillis() - starttime2 < 250 && opModeIsActive())
-        {
-            telemetry.addData("This", " is voodoo");
-            telemetry.update();
-            idle();
-        }
-        slideright(200, 1);
-        spinright(800, 0.5); // 1000
-        hangpin.setPower(0);
-        spinright(750, 0.5);
-        long starttime = System.currentTimeMillis();
-        boolean found = true;
-        while(!(Pixy.getX(1) > minPixyVal && Pixy.getX(1) < maxPixyVal && Pixy.getY(1) > 110) && opModeIsActive())
-        {
-            
-            if (Pixy.getX(1) > 0 && Pixy.getX(1) < minPixyVal && Pixy.getY(1) > 110) {
-                fr.setPower(turnSpeed);
-                fl.setPower(-turnSpeed);
-                br.setPower(turnSpeed);
-                bl.setPower(-turnSpeed);
-            }
-            else if (Pixy.getX(1) > maxPixyVal && Pixy.getX(1) < 255 && Pixy.getY(1) > 110) {
-                fr.setPower(-turnSpeed);
-                fl.setPower(turnSpeed);
-                br.setPower(-turnSpeed);
-                bl.setPower(turnSpeed);
-            }
-            else
-            {
-                fr.setPower(-0.4);
-                fl.setPower(0.4);
-                br.setPower(-0.4);
-                bl.setPower(0.4);
-            }
-            if(System.currentTimeMillis() - starttime > 3000)
-            {
-                found = false;
-                break;
-            }
-        }
-        if(found)
-        {
-            backwards(1000, 0.2);
-            telemetry.addData("Working", " good");
-            telemetry.update();
-        }
-        else
-        {
-            spinleft(750, 0.5);
-            backwards(1000, 0.2);
-        }
+        fr.setPower(0);
+        br.setPower(0);
+        fl.setPower(0);
+        bl.setPower(0);
     }
 }

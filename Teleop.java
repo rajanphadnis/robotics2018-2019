@@ -38,17 +38,18 @@ public class Teleop extends OpMode
     
     public Servo gate = null;
 
-    public double llockopen = 0.2;
+    public double llockopen = 0.25;
     public double llockclosed = 1;
     public double rlockopen = 0.9;
     public double rlockclosed = 0.1;
-    public double lwristup = 0.23;
+    public double lwristup = 0.34; // 0.26
     // dont touch
     public double lwristdown = 1; //0.1
     public double rwristup = 1;
     // ok, u good
-    public double rwristdown = 0.075; //0.84
+    public double rwristdown = 0.0955; //0.84
     public double slowDown = 0.5;
+    public double slowDown25 = 0.25;
     public double deadZoneHigh = 0.5;
     public double deadZoneLow= -0.5;
     public long wristtime = 0;
@@ -213,6 +214,9 @@ public class Teleop extends OpMode
         if(gamepad1.right_bumper){
             
             mecanumDrive_Cartesian(slowDown * leftX, slowDown * leftY,slowDown *  turn);
+        }
+        else if(gamepad1.left_bumper) {
+            mecanumDrive_Cartesian(slowDown25 * leftX, slowDown25 * leftY,slowDown25 *  turn);
         }
         else {
             mecanumDrive_Cartesian(leftX, leftY, turn);
