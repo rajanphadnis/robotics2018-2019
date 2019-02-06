@@ -47,7 +47,7 @@ public class Teleop extends OpMode
     public double lwristdown = 1; //0.1
     public double rwristup = 1;
     // ok, u good
-    public double rwristdown = 0.0955; //0.84
+    public double rwristdown = 0; //0.84
     public double slowDown = 0.5;
     public double slowDown25 = 0.25;
     public double deadZoneHigh = 0.5;
@@ -337,10 +337,15 @@ public class Teleop extends OpMode
              if(wristdown)
              {
                  rwrist.setPosition(rwristup);
+                 //lwrist.getController().pwmEnable();
                  wristtime = System.currentTimeMillis();
                  wristdown = false;
                  waiting = true;
                  waiting2 = true;
+             }
+             else {
+                 telemetry.addData("Nothing", "thing");
+                 telemetry.update();
              }
          }
          //fix this, please
@@ -349,17 +354,17 @@ public class Teleop extends OpMode
             if(!wristdown)
              {
                  lwrist.setPosition(lwristdown);
+                 //rwrist.getController().pwmEnable();
                  wristtime = System.currentTimeMillis();
                  wristdown = true;
                  waiting = true;
                  waiting2 = true;
              }
         }
-         if(!wristdown && System.currentTimeMillis() - wristtime > 500 && waiting)
+         if(!wristdown && (System.currentTimeMillis() - wristtime > 50) && waiting)
          {
              if(waiting2)
              {
-                 lwrist.getController().pwmEnable();
                  lwrist.setPosition(lwristup);
                  waiting2 = false;
              }
@@ -370,12 +375,11 @@ public class Teleop extends OpMode
                 waiting = false;
              }
          }
-         if(wristdown && System.currentTimeMillis() - wristtime > 500 && waiting)
+         if(wristdown && (System.currentTimeMillis() - wristtime > 50) && waiting)
          {
              
              if(waiting2)
              {
-                 rwrist.getController().pwmEnable();
                  rwrist.setPosition(rwristdown);
                  waiting2 = false;
              }
