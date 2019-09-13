@@ -56,12 +56,12 @@ public class DepotMarker extends LinearOpMode {
     public double llockclosed = 1;
     public double rlockopen = 0.9;
     public double rlockclosed = 0.1;
-    public double lwristup = 0.34; // 0.26
+    public double lwristup = 0.97; // 0.26
     // dont touch
-    public double lwristdown = 1; //0.1
-    public double rwristup = 1;
+    public double lwristdown = 0.175; //0.1
+    public double rwristup = 0.03;
     // ok, u good
-    public double rwristdown = 0; //0.84
+    public double rwristdown = 0.825; //0.84
     public long starttime = 0;
 
     public double speedOne = 0.5;
@@ -628,7 +628,7 @@ public class DepotMarker extends LinearOpMode {
             intake.setPower(0);
         }*/
         starttime2 = System.currentTimeMillis();
-        while(System.currentTimeMillis() - starttime2 < 2200 && opModeIsActive())
+        while(System.currentTimeMillis() - starttime2 < 2300 && opModeIsActive()) // 2200
         {
             telemetry.addData("This", " is voodoo");
             telemetry.update();
@@ -658,7 +658,7 @@ public class DepotMarker extends LinearOpMode {
             intake.setPower(0);
         }*/
         starttime2 = System.currentTimeMillis();
-        while(System.currentTimeMillis() - starttime2 < 400 && opModeIsActive())
+        while(System.currentTimeMillis() - starttime2 < 800 && opModeIsActive())
         {
             telemetry.addData("This", " is voodoo");
             telemetry.update();
@@ -755,7 +755,7 @@ public class DepotMarker extends LinearOpMode {
                 br.setPower(-0.4);
                 bl.setPower(0.4);
             }
-            else if(System.currentTimeMillis() - starttime < 3000)
+            else if(System.currentTimeMillis() - starttime < 3400)
             {
                 fr.setPower(0.4);
                 fl.setPower(-0.4);
@@ -769,7 +769,7 @@ public class DepotMarker extends LinearOpMode {
                 br.setPower(0);
                 bl.setPower(0);
             }
-            if(System.currentTimeMillis() - starttime > 3000)
+            if(System.currentTimeMillis() - starttime > 3900)
             {
                 found = false;
                 break;
@@ -807,7 +807,7 @@ public class DepotMarker extends LinearOpMode {
                     bl.setPower(-0.4);
                 }
             }
-            backwards(150, 0.5);
+            backwards(200, 0.5);
             fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -872,20 +872,20 @@ public class DepotMarker extends LinearOpMode {
             fl.setPower(-1);
             bl.setPower(1);
             starttime2 = System.currentTimeMillis();
-            while(System.currentTimeMillis() - starttime2 < 1000 && opModeIsActive())
+            while(System.currentTimeMillis() - starttime2 < 1300 && opModeIsActive())
             {
                 telemetry.addData("This", " is voodoo");
                 telemetry.update();
                 idle();
             }
-            rwrist.getController().pwmDisable();
+            rwrist.setPosition(rwristup);
             lwrist.setPosition(lwristup);
             fr.setPower(-0.5);
-            br.setPower(-0.3);
+            br.setPower(-0.1);
             fl.setPower(-0.5);
             bl.setPower(-0.5);
             starttime2 = System.currentTimeMillis();
-            while(System.currentTimeMillis() - starttime2 < 1500 && opModeIsActive())
+            while(System.currentTimeMillis() - starttime2 < 1800 && opModeIsActive())
             {
                 telemetry.addData("This", " is voodoo");
                 telemetry.update();
@@ -906,17 +906,15 @@ public class DepotMarker extends LinearOpMode {
             }
             rslide.setPower(0);
             lslide.setPower(0);
-            lwrist.setPosition(lwristdown);
             rwrist.setPosition(rwristdown);
+            lwrist.setPosition(lwristdown);
             starttime2 = System.currentTimeMillis();
-            while(System.currentTimeMillis() - starttime2 < 1000 && opModeIsActive())
+            while(System.currentTimeMillis() - starttime2 < 700 && opModeIsActive())
             {
                 telemetry.addData("This", " is voodoo");
                 telemetry.update();
                 idle();
             }
-            lwrist.getController().pwmDisable();
-            rwrist.setPosition(rwristdown);
             intake.setPower(0.8);
             starttime2 = System.currentTimeMillis();
             while(System.currentTimeMillis() - starttime2 < 1000 && opModeIsActive())
@@ -935,12 +933,12 @@ public class DepotMarker extends LinearOpMode {
                 telemetry.update();
                 idle();
             }
-            rwrist.getController().pwmDisable();
-            lwrist.setPosition(lwristdown);
+            rwrist.setPosition(rwristup);
+            lwrist.setPosition(lwristup);
             rslide.setPower(1);
             lslide.setPower(1);
             starttime2 = System.currentTimeMillis();
-            while(System.currentTimeMillis() - starttime2 < 700 && opModeIsActive())
+            while(System.currentTimeMillis() - starttime2 < 450 && opModeIsActive())
             {
                 telemetry.addData("This", " is voodoo");
                 telemetry.update();
@@ -948,12 +946,12 @@ public class DepotMarker extends LinearOpMode {
             }
             rslide.setPower(0);
             lslide.setPower(0);
-            fr.setPower(0.3);
+            fr.setPower(0.1);
             br.setPower(0.5);
             fl.setPower(0.5);
             bl.setPower(0.5);
             starttime2 = System.currentTimeMillis();
-            while(System.currentTimeMillis() - starttime2 < 3500 && opModeIsActive())
+            while(System.currentTimeMillis() - starttime2 < 4000 && opModeIsActive())
             {
                 telemetry.addData("This", " is voodoo");
                 telemetry.update();

@@ -42,14 +42,14 @@ public class Teleop extends OpMode
     public double llockclosed = 1;
     public double rlockopen = 0.9;
     public double rlockclosed = 0.1;
-    public double lwristup = 0.34; // 0.26
+    public double lwristup = 0.34; ///////// 0.34
     // dont touch
     public double lwristdown = 1; //0.1
     public double rwristup = 1;
     // ok, u good
     public double rwristdown = 0; //0.84
     public double slowDown = 0.5;
-    public double slowDown25 = 0.25;
+    public double slowDown25 = 0.35;
     public double deadZoneHigh = 0.5;
     public double deadZoneLow= -0.5;
     public long wristtime = 0;
@@ -211,12 +211,12 @@ public class Teleop extends OpMode
         
         */
         intake.setPower(0);
-        if(gamepad1.right_bumper){
+        if(gamepad1.left_bumper) {
+            mecanumDrive_Cartesian(slowDown25 * leftX, slowDown25 * leftY,slowDown25 *  turn);
+        }
+        else if(gamepad1.right_bumper){
             
             mecanumDrive_Cartesian(slowDown * leftX, slowDown * leftY,slowDown *  turn);
-        }
-        else if(gamepad1.left_bumper) {
-            mecanumDrive_Cartesian(slowDown25 * leftX, slowDown25 * leftY,slowDown25 *  turn);
         }
         else {
             mecanumDrive_Cartesian(leftX, leftY, turn);
@@ -332,63 +332,55 @@ public class Teleop extends OpMode
 
         // wrist position Right works fine
         // rwrist.setPosition(rwristdown);
-        if(gamepad2.dpad_right)
+        /*if(gamepad2.dpad_right)
         {
-             if(wristdown)
-             {
-                 rwrist.setPosition(rwristup);
-                 //lwrist.getController().pwmEnable();
-                 wristtime = System.currentTimeMillis();
-                 wristdown = false;
-                 waiting = true;
-                 waiting2 = true;
-             }
-             else {
-                 telemetry.addData("Nothing", "thing");
-                 telemetry.update();
-             }
+            rwrist.setPosition(rwristup);
+            lwrist.setPosition(lwristup);
+            wristdown = false; 
+            waiting = true;
+            wristtime = System.currentTimeMillis(); 
          }
          //fix this, please
         else if(gamepad2.dpad_left)
         {
-            if(!wristdown)
-             {
-                 lwrist.setPosition(lwristdown);
-                 //rwrist.getController().pwmEnable();
-                 wristtime = System.currentTimeMillis();
-                 wristdown = true;
-                 waiting = true;
-                 waiting2 = true;
-             }
+            //lwrist.getController().pwmDisable();
+            lwrist.setPosition(lwristdown);//
+            rwrist.setPosition(rwristdown);
+            wristdown = true; 
+            waiting = true;
+            wristtime = System.currentTimeMillis(); 
         }
-         if(!wristdown && (System.currentTimeMillis() - wristtime > 50) && waiting)
-         {
-             if(waiting2)
-             {
-                 lwrist.setPosition(lwristup);
-                 waiting2 = false;
-             }
-             if(System.currentTimeMillis() - wristtime > 1000)
-             {
-                rwrist.getController().pwmDisable();
-                lwrist.setPosition(lwristup);
-                waiting = false;
-             }
-         }
-         if(wristdown && (System.currentTimeMillis() - wristtime > 50) && waiting)
-         {
-             
-             if(waiting2)
-             {
-                 rwrist.setPosition(rwristdown);
-                 waiting2 = false;
-             }
-             if(System.currentTimeMillis() - wristtime > 1000)
-             {
-                 lwrist.getController().pwmDisable();
-                 rwrist.setPosition(rwristdown);
-                 waiting = false;
-             }
+        if(!wristdown && System.currentTimeMillis() - wristtime > 500 && waiting)
+        {
+            rwrist.getController().pwmDisable();
+            lwrist.setPosition(lwristup);
+            waiting = false;
         }
+        else if(wristdown && System.currentTimeMillis() - wristtime > 500 && waiting)
+        {
+            lwrist.getController().pwmDisable();
+            rwrist.setPosition(rwristdown);
+            waiting = false;
+        }*/
+        if(gamepad2.dpad_right)
+        {
+            lwrist.setPosition(0.94);
+            rwrist.setPosition(0.06);
+        }
+        else if(gamepad2.dpad_left)
+        {
+            lwrist.setPosition(0.15);
+            rwrist.setPosition(0.85);
+        }
+        /*if(gamepad2.dpad_right)
+        {
+            lwrist.setPosition(0.97);
+            rwrist.setPosition(0.03);
+        }
+        else if(gamepad2.dpad_left)
+        {
+            lwrist.setPosition(0.18);
+            rwrist.setPosition(0.82);
+        }*/
     }
 }
